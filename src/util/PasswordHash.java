@@ -1,27 +1,25 @@
 package util;
 
-import java.security.MessageDigest;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class PasswordHash {
 
-    public static String hash(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = md.digest(password.getBytes());
+    private PasswordHash() {}
 
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedBytes) {
-                sb.append(String.format("%02x", b));
-            }
-
-            return sb.toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Error while hashing password");
+    public static String hashPassword(String rawPassword) {
+        if (rawPassword == null || rawPassword.isBlank()) {
+            throw new IllegalArgumentException("Mậu khẩu không được để trống");
         }
+        return BCrypt.hashpw(rawPassword, BCrypt.gensalt(12));
     }
 
-    public static boolean verify(String inputPassword, String storedHash) {
-        String inputHash = hash(inputPassword);
-        return inputHash.equals(storedHash);
+    public static boolean verifyPassword(String rawPassword, String hashedPassword) {
+        if (rawPassword == null || rawPassword.isBlank()) {
+            return false;
+        }
+        if (hashedPassword == null || hashedPassword.isBlank()) {
+            return false;
+        }
+        return BCrypt.checkpw(rawPassword, hashedPassword);
     }
 }

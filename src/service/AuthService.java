@@ -9,7 +9,7 @@ public class AuthService {
 
     private UserDAO userDAO = new UserDAO();
 
-    public boolean register(String username, String password, String name) {
+    public boolean register(String username, String password, String name, String phone, String department) {
         if (userDAO.findByUsername(username) != null) {
             System.out.println("Username đã tồn tại");
             return false;
@@ -17,9 +17,11 @@ public class AuthService {
 
         User user = new User();
         user.setUsername(username);
-        user.setPassword(PasswordHash.hash(password));
+        user.setPassword(PasswordHash.hashPassword(password));
         user.setRole(Role.EMPLOYEE);
         user.setName(name);
+        user.setPhone(phone);
+        user.setDepartment(department);
 
         return userDAO.insert(user);
     }
@@ -32,7 +34,7 @@ public class AuthService {
             return null;
         }
 
-        if (!PasswordHash.verify(password, user.getPassword())) {
+        if (!PasswordHash.verifyPassword(password, user.getPassword())) {
             System.out.println("Sai mật khẩu");
             return null;
         }

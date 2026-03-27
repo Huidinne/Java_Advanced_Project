@@ -9,7 +9,7 @@ import java.sql.*;
 public class UserDAO {
 
     public User findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE user_name = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -34,7 +34,7 @@ public class UserDAO {
     }
 
     public boolean insert(User user) {
-        String sql = "INSERT INTO users(user_name, password, role, name) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO users(username, password, role, name, phone, department) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -43,6 +43,9 @@ public class UserDAO {
             ps.setString(2, user.getPassword());
             ps.setString(3, user.getRole().name());
             ps.setString(4, user.getName());
+            ps.setString(5, user.getPhone());
+            ps.setString(6, user.getDepartment());
+
 
             return ps.executeUpdate() > 0;
 
