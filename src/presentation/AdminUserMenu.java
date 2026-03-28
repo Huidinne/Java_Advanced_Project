@@ -47,7 +47,7 @@ public class AdminUserMenu {
             username = InputUtil.inputString("Username: ");
             if (Validator.isBlank(username)) {
                 System.out.println("Username không được để trống");
-            } else if (isUsernameTaken(username)) {
+            } else if (authService.isUsernameExists(username)) {
                 System.out.println("Username đã tồn tại");
             } else {
                 break;
@@ -84,9 +84,9 @@ public class AdminUserMenu {
         }
 
         if (authService.createSupportStaff(username, password, name, phone)) {
-            System.out.println("✓ Tạo tài khoản Support Staff thành công");
+            System.out.println("Tạo tài khoản Support Staff thành công");
         } else {
-            System.out.println("✗ Tạo tài khoản thất bại");
+            System.out.println("Tạo tài khoản thất bại");
         }
     }
 
@@ -124,14 +124,9 @@ public class AdminUserMenu {
         int id = InputUtil.inputInt("ID người dùng cần xóa: ");
 
         if (authService.deleteUser(id)) {
-            System.out.println("✓ Xóa người dùng thành công");
+            System.out.println("Xóa người dùng thành công");
         } else {
-            System.out.println("✗ Xóa người dùng thất bại");
+            System.out.println("Xóa người dùng thất bại");
         }
-    }
-
-    private boolean isUsernameTaken(String username) {
-        return authService.getAllUsers().stream()
-                .anyMatch(u -> u.getUsername().equals(username));
     }
 }

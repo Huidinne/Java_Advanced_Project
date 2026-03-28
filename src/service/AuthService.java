@@ -10,6 +10,10 @@ import java.util.List;
 public class AuthService {
 
     private UserDAO userDAO = new UserDAO();
+    public boolean isUsernameExists(String username) {
+        return userDAO.existsByUsername(username);
+    }
+
 
     public boolean register(String username, String password, String name, String phone) {
         if (userDAO.findByUsername(username) != null) {
