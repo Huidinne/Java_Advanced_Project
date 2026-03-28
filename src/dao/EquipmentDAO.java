@@ -10,7 +10,7 @@ import java.util.List;
 public class EquipmentDAO {
 
     public boolean insert(Equipment equipment) {
-        String sql = "INSERT INTO equipment(name, total_quantity, available_quantity, status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO equipments(name, total_quantity, available_quantity, status) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -30,7 +30,7 @@ public class EquipmentDAO {
 
     public List<Equipment> findAll() {
         List<Equipment> list = new ArrayList<>();
-        String sql = "SELECT * FROM equipment";
+        String sql = "SELECT * FROM equipments";
 
         try (Connection conn = DBConnection.getConnection();
                 Statement st = conn.createStatement();
@@ -55,7 +55,7 @@ public class EquipmentDAO {
     }
 
     public Equipment findById(int id) {
-        String sql = "SELECT * FROM equipment WHERE id = ?";
+        String sql = "SELECT * FROM equipments WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -81,7 +81,7 @@ public class EquipmentDAO {
     }
 
     public boolean update(Equipment equipment) {
-        String sql = "UPDATE equipment SET name=?, total_quantity=?, available_quantity=?, status=? WHERE id=?";
+        String sql = "UPDATE equipments SET name=?, total_quantity=?, available_quantity=?, status=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class EquipmentDAO {
     }
 
     public boolean delete(int id) {
-        String sql = "DELETE FROM equipment WHERE id=?";
+        String sql = "DELETE FROM equipments WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -116,7 +116,7 @@ public class EquipmentDAO {
     }
 
     public boolean updateAvailableQuantity(int id, int quantity) {
-        String sql = "UPDATE equipment SET available_quantity=? WHERE id=?";
+        String sql = "UPDATE equipments SET available_quantity=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {

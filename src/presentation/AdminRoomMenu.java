@@ -6,7 +6,7 @@ import util.InputUtil;
 
 import java.util.List;
 
-public class AdminRoomMenu {
+    public class AdminRoomMenu {
 
     private RoomService roomService = new RoomService();
 

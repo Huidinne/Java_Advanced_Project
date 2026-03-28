@@ -10,37 +10,40 @@ import java.util.List;
 public class AuthService {
 
     private UserDAO userDAO = new UserDAO();
+
     public boolean isUsernameExists(String username) {
         return userDAO.existsByUsername(username);
     }
 
-
-    public boolean register(String username, String password, String name, String phone) {
-        if (userDAO.findByUsername(username) != null) {
-            System.out.println("Username đã tồn tại");
-            return false;
-        }
-
+    private User buildUser(String username, String password, String name, String phone, Role role) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(PasswordHash.hashPassword(password));
-        user.setRole(Role.EMPLOYEE);
+        user.setRole(role);
         user.setName(name);
         user.setPhone(phone);
+        return user;
+    }
 
+
+    public boolean register(String username, String password, String name, String phone) {
+        if (userDAO.existsByUsername(username)) {
+            return false;
+        }
+
+        User user = buildUser(username, password, name, phone, Role.EMPLOYEE);
         return userDAO.insert(user);
     }
+
 
     public User login(String username, String password) {
         User user = userDAO.findByUsername(username);
 
         if (user == null) {
-            System.out.println("User không tồn tại");
             return null;
         }
 
         if (!PasswordHash.verifyPassword(password, user.getPassword())) {
-            System.out.println("Sai mật khẩu");
             return null;
         }
 
@@ -48,18 +51,11 @@ public class AuthService {
     }
 
     public boolean createSupportStaff(String username, String password, String name, String phone) {
-        if (userDAO.findByUsername(username) != null) {
-            System.out.println("Username đã tồn tại");
+        if (userDAO.existsByUsername(username)) {
             return false;
         }
 
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(PasswordHash.hashPassword(password));
-        user.setRole(Role.SUPPORT);
-        user.setName(name);
-        user.setPhone(phone);
-
+        User user = buildUser(username, password, name, phone, Role.SUPPORT);
         return userDAO.insert(user);
     }
 

@@ -27,6 +27,10 @@ public class RoomService {
     }
 
     public boolean updateRoom(int id, String name, int capacity, String location) {
+        if (roomDAO.findById(id) == null) {
+            System.out.println("Phòng không tồn tại");
+            return false;
+        }
         Room room = new Room();
         room.setId(id);
         room.setName(name);
@@ -37,6 +41,10 @@ public class RoomService {
     }
 
     public boolean deleteRoom(int id) {
+        if (roomDAO.findById(id) == null) {
+            System.out.println("Phòng không tồn tại");
+            return false;
+        }
         return roomDAO.delete(id);
     }
 }

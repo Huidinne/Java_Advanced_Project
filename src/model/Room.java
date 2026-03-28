@@ -5,14 +5,17 @@ public class Room {
     private String name;
     private int capacity;
     private String location;
+    private RoomStatus status;
+
 
     public Room() {}
 
-    public Room(int id, String name, int capacity, String location) {
+    public Room(int id, String name, int capacity, String location, RoomStatus status) {
         this.id = id;
         this.name = name;
         this.capacity = capacity;
         this.location = location;
+        this.status = status;
     }
 
     public int getId() {
@@ -46,4 +49,8 @@ public class Room {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    public RoomStatus getStatus() {return status;}
+
+    public void setStatus(RoomStatus status) {}
 }
