@@ -67,16 +67,10 @@ public class AuthMenu {
             } else break;
         }
 
-        String department;
-        while (true) {
-            department = InputUtil.inputString("Department: ");
-            if (Validator.isBlank(department)) {
-                System.out.println("Department không được để trống");
-            }else break;
-        }
-
-        if (authService.register(username, password, name, phone, department)) {
-            System.out.println("Đăng ký thành công");
+        if (authService.register(username, password, name, phone)) {
+            System.out.println("✓ Đăng ký thành công");
+        } else {
+            System.out.println("✗ Đăng ký thất bại");
         }
     }
 
@@ -100,11 +94,17 @@ public class AuthMenu {
         User user = authService.login(username, password);
 
         if (user != null) {
-            System.out.println("Login thành công: " + user.getRole());
+            System.out.println("✓ Đăng nhập thành công: " + user.getRole());
 
             if (user.getRole() == Role.ADMIN) {
-                new AdminRoomMenu().show();
+                new AdminDashboard().show();
+            } else if (user.getRole() == Role.SUPPORT) {
+                new SupportMenu().show();
+            } else if (user.getRole() == Role.EMPLOYEE) {
+                new EmployeeMenu().show();
             }
+        } else {
+            System.out.println("✗ Đăng nhập thất bại");
         }
     }
-}
+}}}

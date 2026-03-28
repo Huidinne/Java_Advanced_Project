@@ -7,17 +7,15 @@ public class User {
     private Role role;
     private String name;
     private String phone;
-    private String department;
 
     public User(){}
-    public User(int id, String username, String password, Role role, String name, String phone, String department) {
+    public User(int id, String username, String password, Role role, String name, String phone) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.name = name;
         this.phone = phone;
-        this.department = department;
     }
 
     public int getId() {
@@ -64,14 +62,6 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
     }
 
 }

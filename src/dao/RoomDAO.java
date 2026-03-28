@@ -13,7 +13,7 @@ public class RoomDAO {
         String sql = "INSERT INTO rooms(name, capacity, location) VALUES (?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, room.getName());
             ps.setInt(2, room.getCapacity());
@@ -32,8 +32,8 @@ public class RoomDAO {
         String sql = "SELECT * FROM rooms";
 
         try (Connection conn = DBConnection.getConnection();
-             Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+                Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 Room room = new Room();
@@ -52,11 +52,37 @@ public class RoomDAO {
         return list;
     }
 
+    public Room findById(int id) {
+        String sql = "SELECT * FROM rooms WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Room room = new Room();
+                room.setId(rs.getInt("id"));
+                room.setName(rs.getString("name"));
+                room.setCapacity(rs.getInt("capacity"));
+                room.setLocation(rs.getString("location"));
+
+                return room;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     public boolean update(Room room) {
         String sql = "UPDATE rooms SET name=?, capacity=?, location=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, room.getName());
             ps.setInt(2, room.getCapacity());
@@ -75,7 +101,7 @@ public class RoomDAO {
         String sql = "DELETE FROM rooms WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;

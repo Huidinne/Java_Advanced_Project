@@ -5,11 +5,13 @@ import model.Role;
 import model.User;
 import util.PasswordHash;
 
+import java.util.List;
+
 public class AuthService {
 
     private UserDAO userDAO = new UserDAO();
 
-    public boolean register(String username, String password, String name, String phone, String department) {
+    public boolean register(String username, String password, String name, String phone) {
         if (userDAO.findByUsername(username) != null) {
             System.out.println("Username đã tồn tại");
             return false;
@@ -21,7 +23,6 @@ public class AuthService {
         user.setRole(Role.EMPLOYEE);
         user.setName(name);
         user.setPhone(phone);
-        user.setDepartment(department);
 
         return userDAO.insert(user);
     }
@@ -40,5 +41,33 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    public boolean createSupportStaff(String username, String password, String name, String phone) {
+        if (userDAO.findByUsername(username) != null) {
+            System.out.println("Username đã tồn tại");
+            return false;
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(PasswordHash.hashPassword(password));
+        user.setRole(Role.SUPPORT);
+        user.setName(name);
+        user.setPhone(phone);
+
+        return userDAO.insert(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userDAO.findAll();
+    }
+
+    public List<User> getUsersByRole(Role role) {
+        return userDAO.findByRole(role);
+    }
+
+    public boolean deleteUser(int id) {
+        return userDAO.delete(id);
     }
 }

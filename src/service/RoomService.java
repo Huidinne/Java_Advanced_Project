@@ -22,6 +22,10 @@ public class RoomService {
         return roomDAO.findAll();
     }
 
+    public Room getRoomById(int id) {
+        return roomDAO.findById(id);
+    }
+
     public boolean updateRoom(int id, String name, int capacity, String location) {
         Room room = new Room();
         room.setId(id);
