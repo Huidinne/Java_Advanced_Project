@@ -3,6 +3,7 @@ package model;
 public enum BookingStatus {
     PENDING,
     APPROVED,
-    REJECTED
+    REJECTED,
+    CANCELLED
 }
 

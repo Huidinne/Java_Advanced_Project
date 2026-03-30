@@ -62,7 +62,7 @@ public class AuthMenu {
         switch (user.getRole()) {
             case ADMIN -> new AdminDashboard().show();
             case SUPPORT -> new SupportMenu().show();
-            case EMPLOYEE -> new EmployeeMenu().show();
+            case EMPLOYEE -> new EmployeeMenu(user).show();
         }
     }
 

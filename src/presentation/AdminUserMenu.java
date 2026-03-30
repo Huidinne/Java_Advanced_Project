@@ -16,9 +16,9 @@ public class AdminUserMenu {
         while (true) {
             int choice = InputUtil.inputInt("""
                     ================================
-                        QUẢN LÝ NGƯỜI DÙNG
+                           QUẢN LÝ NGƯỜI DÙNG
                     ================================
-                    | 1 | Tạo tài khoản Support    |
+                    | 1 | Tạo tài khoản người dùng |
                     | 2 | Xem danh sách người dùng |
                     | 3 | Xem Support Staff        |
                     | 4 | Xóa người dùng           |
@@ -27,7 +27,7 @@ public class AdminUserMenu {
                     Chọn: """);
 
             switch (choice) {
-                case 1 -> createSupportStaff();
+                case 1 -> createUser();
                 case 2 -> viewAllUsers();
                 case 3 -> viewSupportStaff();
                 case 4 -> deleteUser();
@@ -39,8 +39,8 @@ public class AdminUserMenu {
         }
     }
 
-    private void createSupportStaff() {
-        System.out.println("=== TẠO TÀI KHOẢN SUPPORT STAFF ===");
+    private void createUser() {
+        System.out.println("=== TẠO TÀI KHOẢN NGƯỜI DÙNG ===");
 
         String username;
         while (true) {
@@ -61,8 +61,9 @@ public class AdminUserMenu {
                 System.out.println("Password không được để trống");
             } else if (!Validator.isStrongPassword(password)) {
                 System.out.println("Password phải >= 6 ký tự");
-            } else
+            } else {
                 break;
+            }
         }
 
         String name;
@@ -70,8 +71,9 @@ public class AdminUserMenu {
             name = InputUtil.inputString("Name: ");
             if (Validator.isBlank(name)) {
                 System.out.println("Name không được để trống");
-            } else
+            } else {
                 break;
+            }
         }
 
         String phone;
@@ -79,14 +81,38 @@ public class AdminUserMenu {
             phone = InputUtil.inputString("Phone: ");
             if (!Validator.isBlank(phone) && !Validator.isPhoneValid(phone)) {
                 System.out.println("Số điện thoại không hợp lệ");
-            } else
+            } else {
                 break;
+            }
         }
 
-        if (authService.createSupportStaff(username, password, name, phone)) {
-            System.out.println("Tạo tài khoản Support Staff thành công");
+        Role role = inputRole();
+        if (authService.createUser(username, password, name, phone, role)) {
+            System.out.printf("Tạo tài khoản %s thành công%n", role);
         } else {
             System.out.println("Tạo tài khoản thất bại");
+        }
+    }
+
+    private Role inputRole() {
+        while (true) {
+            int roleChoice = InputUtil.inputInt("""
+                    Chọn role:
+                    | 1 | ADMIN    |
+                    | 2 | EMPLOYEE |
+                    | 3 | SUPPORT  |
+                    Chọn: """);
+
+            switch (roleChoice) {
+                case 1:
+                    return Role.ADMIN;
+                case 2:
+                    return Role.EMPLOYEE;
+                case 3:
+                    return Role.SUPPORT;
+                default:
+                    System.out.println("Role không hợp lệ");
+            }
         }
     }
 

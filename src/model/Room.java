@@ -7,8 +7,8 @@ public class Room {
     private String location;
     private RoomStatus status;
 
-
-    public Room() {}
+    public Room() {
+    }
 
     public Room(int id, String name, int capacity, String location, RoomStatus status) {
         this.id = id;
@@ -50,7 +50,11 @@ public class Room {
         this.location = location;
     }
 
-    public RoomStatus getStatus() {return status;}
+    public RoomStatus getStatus() {
+        return status;
+    }
 
-    public void setStatus(RoomStatus status) {}
+    public void setStatus(RoomStatus status) {
+        this.status = status;
+    }
 }

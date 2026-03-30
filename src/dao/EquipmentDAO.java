@@ -80,6 +80,27 @@ public class EquipmentDAO {
         return null;
     }
 
+    public Equipment findById(int id, Connection conn) throws SQLException {
+        String sql = "SELECT * FROM equipments WHERE id = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Equipment equipment = new Equipment();
+                equipment.setId(rs.getInt("id"));
+                equipment.setName(rs.getString("name"));
+                equipment.setTotalQuantity(rs.getInt("total_quantity"));
+                equipment.setAvailableQuantity(rs.getInt("available_quantity"));
+                equipment.setStatus(rs.getString("status"));
+
+                return equipment;
+            }
+        }
+        return null;
+    }
+
     public boolean update(Equipment equipment) {
         String sql = "UPDATE equipments SET name=?, total_quantity=?, available_quantity=?, status=? WHERE id=?";
 
@@ -130,5 +151,37 @@ public class EquipmentDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean reserveAvailableQuantity(int id, int quantity, Connection conn) throws SQLException {
+        String sql = """
+                UPDATE equipments
+                SET available_quantity = available_quantity - ?
+                WHERE id = ?
+                  AND status = 'AVAILABLE'
+                  AND available_quantity >= ?
+                """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, id);
+            ps.setInt(3, quantity);
+
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean increaseAvailableQuantity(int id, int quantity, Connection conn) throws SQLException {
+        String sql = """
+                UPDATE equipments
+                SET available_quantity = available_quantity + ?
+                WHERE id = ?
+                """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
     }
 }

@@ -50,12 +50,12 @@ public class AuthService {
         return user;
     }
 
-    public boolean createSupportStaff(String username, String password, String name, String phone) {
+    public boolean createUser(String username, String password, String name, String phone, Role role) {
         if (userDAO.existsByUsername(username)) {
             return false;
         }
 
-        User user = buildUser(username, password, name, phone, Role.SUPPORT);
+        User user = buildUser(username, password, name, phone, role);
         return userDAO.insert(user);
     }
 
