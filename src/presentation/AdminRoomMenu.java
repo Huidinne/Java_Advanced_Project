@@ -158,10 +158,29 @@ public class AdminRoomMenu {
     private void deleteRoom() {
         int id = InputUtil.inputInt("ID phòng cần xóa: ");
 
+        System.out.print("Xác nhận xóa phòng ID " + id + "? (y/n): ");
+        if (!confirmYesNo()) {
+            System.out.println("Đã hủy thao tác xóa phòng");
+            return;
+        }
+
         if (roomService.deleteRoom(id)) {
             System.out.println("Xóa phòng thành công");
         } else {
             System.out.println("Phòng không tồn tại");
+        }
+    }
+
+    private boolean confirmYesNo() {
+        while (true) {
+            String input = InputUtil.inputString("");
+            if ("y".equalsIgnoreCase(input)) {
+                return true;
+            }
+            if ("n".equalsIgnoreCase(input)) {
+                return false;
+            }
+            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }

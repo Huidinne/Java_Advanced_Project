@@ -149,10 +149,29 @@ public class AdminUserMenu {
     private void deleteUser() {
         int id = InputUtil.inputInt("ID người dùng cần xóa: ");
 
+        System.out.print("Xác nhận xóa người dùng ID " + id + "? (y/n): ");
+        if (!confirmYesNo()) {
+            System.out.println("Đã hủy thao tác xóa người dùng");
+            return;
+        }
+
         if (authService.deleteUser(id)) {
             System.out.println("Xóa người dùng thành công");
         } else {
             System.out.println("Xóa người dùng thất bại");
+        }
+    }
+
+    private boolean confirmYesNo() {
+        while (true) {
+            String input = InputUtil.inputString("");
+            if ("y".equalsIgnoreCase(input)) {
+                return true;
+            }
+            if ("n".equalsIgnoreCase(input)) {
+                return false;
+            }
+            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }

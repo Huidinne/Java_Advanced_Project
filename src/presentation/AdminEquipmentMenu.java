@@ -93,10 +93,29 @@ public class AdminEquipmentMenu {
     private void deleteEquipment() {
         int id = InputUtil.inputInt("ID thiết bị cần xóa: ");
 
+        System.out.print("Xác nhận xóa thiết bị ID " + id + "? (y/n): ");
+        if (!confirmYesNo()) {
+            System.out.println("Đã hủy thao tác xóa thiết bị");
+            return;
+        }
+
         if (equipmentService.deleteEquipment(id)) {
             System.out.println("Xóa thiết bị thành công");
         } else {
             System.out.println("Xóa thiết bị thất bại");
+        }
+    }
+
+    private boolean confirmYesNo() {
+        while (true) {
+            String input = InputUtil.inputString("");
+            if ("y".equalsIgnoreCase(input)) {
+                return true;
+            }
+            if ("n".equalsIgnoreCase(input)) {
+                return false;
+            }
+            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }
