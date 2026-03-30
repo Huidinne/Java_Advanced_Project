@@ -15,13 +15,13 @@ public class AdminServiceMenu {
         while (true) {
             int choice = InputUtil.inputInt("""
                     ================================
-                        QUAN LY DICH VU DI KEM
+                          QUẢN LÍ DỊCH VỤ ĐI KÈM
                     ================================
-                    | 1 | Xem danh sach dich vu    |
-                    | 2 | Them dich vu             |
-                    | 3 | Sua dich vu              |
-                    | 4 | Xoa dich vu              |
-                    | 0 | Thoat                     |
+                    | 1 | Xem danh sách dịch vụ    |
+                    | 2 | Thêm dịch vụ             |
+                    | 3 | Sửa dịch vụ              |
+                    | 4 | Xóa dịch vụ              |
+                    | 0 | Thoát                    |
                     ================================
                     Chon: """);
 
@@ -33,7 +33,7 @@ public class AdminServiceMenu {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("Lua chon khong hop le");
+                default -> System.out.println("Lựa chọn khong hợp lệ");
             }
         }
     }
@@ -41,96 +41,96 @@ public class AdminServiceMenu {
     private void viewServicesTable() {
         List<Service> services = serviceService.getAllServices();
         if (services.isEmpty()) {
-            System.out.println("Khong co dich vu nao");
+            System.out.println("Không có dịch vụ nào");
             return;
         }
 
-        System.out.println("====================================================");
-        System.out.println("ID | Ten dich vu                  | Gia");
-        System.out.println("----------------------------------------------------");
+        System.out.println("======================================================");
+        System.out.println("ID |          Tên dịch vụ         |         Giá (VND) ");
+        System.out.println("------------------------------------------------------");
         for (Service s : services) {
             System.out.printf("%-2d | %-27s | %,.0f%n", s.getId(), s.getName(), s.getPrice());
         }
-        System.out.println("====================================================");
+        System.out.println("======================================================");
     }
 
     private void addServiceFlow() {
-        String name = inputServiceName("Ten dich vu: ");
-        double price = inputPositivePrice("Gia dich vu: ");
+        String name = inputServiceName("Tên dịch vụ: ");
+        double price = inputPositivePrice("Giá dịch vụ: ");
 
-        System.out.printf("Xac nhan them dich vu '%s' voi gia %,.0f? (y/n): ", name, price);
+        System.out.printf("Xác định thêm dịch vụ '%s' với giá %,.0f? (y/n): ", name, price);
         if (!confirmAction()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             if (serviceService.addService(name, price)) {
-                System.out.println("Them dich vu thanh cong");
+                System.out.println("Thêm dịch vụ thành công");
             } else {
-                System.out.println("Them dich vu that bai");
+                System.out.println("Thêm dịch vụ thất bại");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Du lieu khong hop le: " + e.getMessage());
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Loi he thong khi them dich vu: " + e.getMessage());
+            System.out.println("Lỗi hệ thống khi thêm dịch vụ: " + e.getMessage());
         }
     }
 
     private void updateServiceFlow() {
-        int id = InputUtil.inputInt("Nhap ID dich vu can sua: ");
+        int id = InputUtil.inputInt("Nhập ID dịch vụ cần sửa: ");
         Service current = serviceService.getServiceById(id);
         if (current == null) {
-            System.out.println("Dich vu khong ton tai");
+            System.out.println("Dịch vụ không tồn tại");
             return;
         }
 
-        String name = inputServiceName("Ten dich vu moi: ");
-        double price = inputPositivePrice("Gia dich vu moi: ");
+        String name = inputServiceName("Tên dịch vụ mới: ");
+        double price = inputPositivePrice("Giá dịch vụ mới: ");
 
-        System.out.printf("Xac nhan sua dich vu ID %d thanh '%s' - %,.0f? (y/n): ", id, name, price);
+        System.out.printf("Xác nhận sửa dịch vụ ID %d thành '%s' - %,.0f? (y/n): ", id, name, price);
         if (!confirmAction()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             if (serviceService.updateService(id, name, price)) {
-                System.out.println("Cap nhat dich vu thanh cong");
+                System.out.println("Cập nhật dịch vụ thành công");
             } else {
-                System.out.println("Cap nhat dich vu that bai");
+                System.out.println("Cập nhật dịch vụ thất bại");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Du lieu khong hop le: " + e.getMessage());
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Loi he thong khi cap nhat dich vu: " + e.getMessage());
+            System.out.println("Lỗi hệ thống khi cập nhật dịch vụ: " + e.getMessage());
         }
     }
 
     private void deleteServiceFlow() {
-        int id = InputUtil.inputInt("Nhap ID dich vu can xoa: ");
+        int id = InputUtil.inputInt("Nập ID dịch vụ muốn xóa: ");
         Service current = serviceService.getServiceById(id);
         if (current == null) {
-            System.out.println("Dich vu khong ton tai");
+            System.out.println("Dịch vụ không tồn tại");
             return;
         }
 
-        System.out.printf("Xac nhan xoa dich vu '%s' (ID %d)? (y/n): ", current.getName(), current.getId());
+        System.out.printf("Xác nhận xóa dịch vụ '%s' (ID %d)? (y/n): ", current.getName(), current.getId());
         if (!confirmAction()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             if (serviceService.deleteService(id)) {
-                System.out.println("Xoa dich vu thanh cong");
+                System.out.println("Xóa dịch vụ thành công");
             } else {
-                System.out.println("Xoa dich vu that bai");
+                System.out.println("Xóa dịch vụ thất bại");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Du lieu khong hop le: " + e.getMessage());
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Khong the xoa dich vu. Co the dang duoc su dung trong booking.");
+            System.out.println("Không thể xóa dịch vụ. Có thể đang được sử dụng.");
         }
     }
 
@@ -138,7 +138,7 @@ public class AdminServiceMenu {
         while (true) {
             String name = InputUtil.inputString(message);
             if (Validator.isBlank(name)) {
-                System.out.println("Ten dich vu khong duoc de trong");
+                System.out.println("Tên dịch vụ không được để trống");
             } else {
                 return name.trim();
             }
@@ -149,7 +149,7 @@ public class AdminServiceMenu {
         while (true) {
             double price = InputUtil.inputDouble(message);
             if (price <= 0) {
-                System.out.println("Gia dich vu phai lon hon 0");
+                System.out.println("Giá dịch vụ phải lớn hơn 0");
             } else {
                 return price;
             }
@@ -165,7 +165,7 @@ public class AdminServiceMenu {
             if ("n".equalsIgnoreCase(confirm)) {
                 return false;
             }
-            System.out.print("Vui long nhap y hoac n: ");
+            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }

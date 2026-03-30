@@ -10,12 +10,14 @@ public class Booking {
     private LocalDateTime endTime;
     private BookingStatus status;
     private Integer supportStaffId;
+    private PreparationStatus preparationStatus;
 
     public Booking() {}
 
     public Booking(int id, int userId, int roomId,
                    LocalDateTime startTime, LocalDateTime endTime,
-                   BookingStatus status, Integer supportStaffId) {
+                   BookingStatus status, Integer supportStaffId,
+                   PreparationStatus preparationStatus) {
         this.id = id;
         this.userId = userId;
         this.roomId = roomId;
@@ -23,6 +25,7 @@ public class Booking {
         this.endTime = endTime;
         this.status = status;
         this.supportStaffId = supportStaffId;
+        this.preparationStatus = preparationStatus;
     }
 
     public int getId() {
@@ -79,5 +82,13 @@ public class Booking {
 
     public void setSupportStaffId(Integer supportStaffId) {
         this.supportStaffId = supportStaffId;
+    }
+
+    public PreparationStatus getPreparationStatus() {
+        return preparationStatus;
+    }
+
+    public void setPreparationStatus(PreparationStatus preparationStatus) {
+        this.preparationStatus = preparationStatus;
     }
 }

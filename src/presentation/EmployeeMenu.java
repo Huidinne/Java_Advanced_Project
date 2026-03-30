@@ -28,11 +28,11 @@ public class EmployeeMenu {
         while (true) {
             int choice = InputUtil.inputInt("""
                     ================================
-                        MENU NHÂN VIÊN
+                              MENU NHÂN VIÊN
                     ================================
                     | 1 | Đặt phòng & yêu cầu DV   |
                     | 2 | Xem lịch họp của tôi     |
-                    | 3 | Hủy booking PENDING     |
+                    | 3 | Hủy booking              |
                     | 0 | Đăng xuất                |
                     ================================
                     Chọn: """);
@@ -101,20 +101,22 @@ public class EmployeeMenu {
             return;
         }
 
-        System.out.println("============================================================================================================");
-        System.out.println("ID | Room ID | Start Time         | End Time           | Trạng thái duyệt | Chuẩn bị");
-        System.out.println("------------------------------------------------------------------------------------------------------------");
+        System.out.println("=================================================================================================================================");
+        System.out.println("ID | Room ID | Start Time         | End Time           | Trang thai duyet | Trang thai san sang  | Chuan bi");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
         for (Booking b : list) {
             String preparation = bookingService.getPreparationSummary(b.getId());
-            System.out.printf("%-2d | %-7d | %-18s | %-18s | %-16s | %s%n",
+            String readiness = b.getPreparationStatus() == null ? "NOT_ASSIGNED" : b.getPreparationStatus().name();
+            System.out.printf("%-2d | %-7d | %-18s | %-18s | %-15s | %-19s | %s%n",
                     b.getId(),
                     b.getRoomId(),
                     b.getStartTime().format(DATE_TIME_FORMATTER),
                     b.getEndTime().format(DATE_TIME_FORMATTER),
                     b.getStatus().name(),
+                    readiness,
                     preparation);
         }
-        System.out.println("============================================================================================================");
+        System.out.println("=================================================================================================================================");
     }
 
     private void cancelPendingBooking() {
@@ -149,14 +151,14 @@ public class EmployeeMenu {
     }
 
     private void printAvailableRooms(List<Room> rooms) {
-        System.out.println("==============================================================");
-        System.out.println("ID | Tên phòng        | Sức chứa | Vị trí        | Trạng thái");
-        System.out.println("--------------------------------------------------------------");
+        System.out.println("=============================================================");
+        System.out.println("ID | Tên phòng       | Sức chứa | Vị trí        | Trạng thái");
+        System.out.println("-------------------------------------------------------------");
         for (Room r : rooms) {
             System.out.printf("%-2d | %-15s | %-8d | %-12s | %-10s%n",
                     r.getId(), r.getName(), r.getCapacity(), r.getLocation(), r.getStatus().name());
         }
-        System.out.println("==============================================================");
+        System.out.println("=============================================================");
     }
 
     private List<BookingDetail> inputEquipmentDetails() {

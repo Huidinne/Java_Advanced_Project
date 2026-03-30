@@ -73,6 +73,7 @@ public class BookingService {
 			booking.setEndTime(endTime);
 			booking.setStatus(BookingStatus.PENDING);
 			booking.setSupportStaffId(null);
+			booking.setPreparationStatus(PreparationStatus.NOT_ASSIGNED);
 
 			int bookingId = bookingDAO.insert(booking, conn);
 

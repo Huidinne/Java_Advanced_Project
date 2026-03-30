@@ -14,6 +14,7 @@ public class AdminDashboard {
                     | 2 | Quản lý Thiết bị                       |
                     | 3 | Quản lý Người dùng                     |
                     | 4 | Quản lý Dịch vụ đi kèm                 |
+                    | 5 | Duyệt & Phân công booking              |
                     | 0 | Đăng xuất                              |
                     ================================================
                     Chọn: """);
@@ -23,6 +24,7 @@ public class AdminDashboard {
                 case 2 -> new AdminEquipmentMenu().show();
                 case 3 -> new AdminUserMenu().show();
                 case 4 -> new AdminServiceMenu().show();
+                case 5 -> new AdminWorkflowMenu().show();
                 case 0 -> {
                     System.out.println("Đã đăng xuất");
                     return;
