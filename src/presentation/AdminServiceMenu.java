@@ -23,7 +23,7 @@ public class AdminServiceMenu {
                     | 4 | Xóa dịch vụ              |
                     | 0 | Thoát                    |
                     ================================
-                    Chon: """);
+                    Chọn: """);
 
             switch (choice) {
                 case 1 -> viewServicesTable();
@@ -33,7 +33,7 @@ public class AdminServiceMenu {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("Lựa chọn khong hợp lệ");
+                default -> System.out.println("Lựa chọn không hợp lệ");
             }
         }
     }
@@ -108,7 +108,7 @@ public class AdminServiceMenu {
     }
 
     private void deleteServiceFlow() {
-        int id = InputUtil.inputInt("Nập ID dịch vụ muốn xóa: ");
+        int id = InputUtil.inputInt("Nhập ID dịch vụ muốn xóa: ");
         Service current = serviceService.getServiceById(id);
         if (current == null) {
             System.out.println("Dịch vụ không tồn tại");

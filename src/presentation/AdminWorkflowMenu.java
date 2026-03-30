@@ -19,15 +19,15 @@ public class AdminWorkflowMenu {
         while (true) {
             int choice = InputUtil.inputInt("""
                     ==================================
-                        DUYET & PHAN CONG BOOKING
+                        DUYỆT & PHÂN CÔNG BOOKING
                     ==================================
                     | 1 | Xem booking PENDING       |
-                    | 2 | Duyet booking             |
-                    | 3 | Tu choi booking           |
-                    | 4 | Phan cong support         |
-                    | 0 | Quay lai                  |
+                    | 2 | Duyệt booking             |
+                    | 3 | Từ chối booking           |
+                    | 4 | Phân công support         |
+                    | 0 | Quay lại                  |
                     ==================================
-                    Chon: """);
+                    Chọn: """);
 
             switch (choice) {
                 case 1 -> viewPendingBookings();
@@ -37,7 +37,7 @@ public class AdminWorkflowMenu {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("Lua chon khong hop le");
+                default -> System.out.println("Lựa chọn không hợp lệ");
             }
         }
     }
@@ -45,7 +45,7 @@ public class AdminWorkflowMenu {
     private void viewPendingBookings() {
         List<Booking> list = workflowService.getPendingBookings();
         if (list.isEmpty()) {
-            System.out.println("Khong co booking PENDING nao");
+            System.out.println("Không có booking PENDING nào");
             return;
         }
 
@@ -65,80 +65,80 @@ public class AdminWorkflowMenu {
     }
 
     private void approveBookingFlow() {
-        int bookingId = InputUtil.inputInt("Nhap ID booking can duyet: ");
-        System.out.print("Xac nhan duyet booking nay? (y/n): ");
+        int bookingId = InputUtil.inputInt("Nhập ID booking cần duyệt: ");
+        System.out.print("Xác nhận duyệt booking này? (y/n): ");
         if (!confirmYesNo()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             boolean ok = workflowService.approveBooking(bookingId);
             if (ok) {
-                System.out.println("Duyet booking thanh cong");
+                System.out.println("Duyệt booking thành công");
             } else {
-                System.out.println("Duyet that bai: booking khong ton tai, khong o PENDING, hoac trung lich APPROVED");
+                System.out.println("Duyệt thất bại: booking không tồn tại, không ở PENDING, hoặc trùng lịch APPROVED");
             }
         } catch (RuntimeException e) {
-            System.out.println("Loi duyet booking: " + e.getMessage());
+            System.out.println("Lỗi duyệt booking: " + e.getMessage());
         }
     }
 
     private void rejectBookingFlow() {
-        int bookingId = InputUtil.inputInt("Nhap ID booking can tu choi: ");
-        System.out.print("Xac nhan tu choi booking nay? (y/n): ");
+        int bookingId = InputUtil.inputInt("Nhập ID booking cần từ chối: ");
+        System.out.print("Xác nhận từ chối booking này? (y/n): ");
         if (!confirmYesNo()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             boolean ok = workflowService.rejectBooking(bookingId);
             if (ok) {
-                System.out.println("Tu choi booking thanh cong");
+                System.out.println("Từ chối booking thành công");
             } else {
-                System.out.println("Tu choi that bai: booking khong ton tai hoac khong o PENDING");
+                System.out.println("Từ chối thất bại: booking không tồn tại hoặc không ở PENDING");
             }
         } catch (RuntimeException e) {
-            System.out.println("Loi tu choi booking: " + e.getMessage());
+            System.out.println("Lỗi từ chối booking: " + e.getMessage());
         }
     }
 
     private void assignSupportFlow() {
-        int bookingId = InputUtil.inputInt("Nhap ID booking da duyet can phan cong support: ");
+        int bookingId = InputUtil.inputInt("Nhập ID booking đã duyệt cần phân công support: ");
         printSupportStaff();
-        int supportId = InputUtil.inputInt("Nhap ID support staff: ");
+        int supportId = InputUtil.inputInt("Nhập ID support staff: ");
 
-        System.out.print("Xac nhan phan cong support cho booking nay? (y/n): ");
+        System.out.print("Xác nhận phân công support cho booking này? (y/n): ");
         if (!confirmYesNo()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             boolean ok = workflowService.assignSupportStaff(bookingId, supportId);
             if (ok) {
-                System.out.println("Phan cong support thanh cong");
+                System.out.println("Phân công support thành công");
             } else {
-                System.out.println("Phan cong that bai: booking khong ton tai hoac chua duoc APPROVED");
+                System.out.println("Phân công thất bại: booking không tồn tại hoặc chưa được APPROVED");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Du lieu khong hop le: " + e.getMessage());
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Loi phan cong support: " + e.getMessage());
+            System.out.println("Lỗi phân công support: " + e.getMessage());
         }
     }
 
     private void printSupportStaff() {
         List<User> supports = authService.getUsersByRole(model.Role.SUPPORT);
         if (supports.isEmpty()) {
-            System.out.println("Khong co support staff nao");
+            System.out.println("Không có support staff nào");
             return;
         }
 
-        System.out.println("=== DANH SACH SUPPORT STAFF ===");
+        System.out.println("=== DANH SÁCH SUPPORT STAFF ===");
         for (User u : supports) {
-            System.out.printf("ID: %d | Username: %s | Ten: %s%n", u.getId(), u.getUsername(), u.getName());
+            System.out.printf("ID: %d | Username: %s | Tên: %s%n", u.getId(), u.getUsername(), u.getName());
         }
     }
 
@@ -151,7 +151,7 @@ public class AdminWorkflowMenu {
             if ("n".equalsIgnoreCase(input)) {
                 return false;
             }
-            System.out.print("Vui long nhap y hoac n: ");
+            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }

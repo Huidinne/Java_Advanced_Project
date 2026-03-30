@@ -207,6 +207,32 @@ public class BookingDAO {
 		}
 	}
 
+	public List<Booking> findAssignedBySupport(int supportStaffId) {
+		List<Booking> list = new ArrayList<>();
+		String sql = """
+				SELECT *
+				FROM bookings
+				WHERE support_staff_id = ?
+				  AND status = 'APPROVED'
+				  AND preparation_status <> 'READY'
+				ORDER BY start_time
+				""";
+
+		try (Connection conn = DBConnection.getConnection();
+				 PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, supportStaffId);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				list.add(mapBooking(rs));
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException("Lỗi lấy danh sách công việc hỗ trợ", e);
+		}
+
+		return list;
+	}
+
 	public List<Booking> findAssignedBySupportAndDate(int supportStaffId, LocalDate date) {
 		List<Booking> list = new ArrayList<>();
 		String sql = """

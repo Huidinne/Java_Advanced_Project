@@ -91,6 +91,9 @@ public class EmployeeMenu {
             System.out.println("Lỗi dữ liệu: " + e.getMessage());
         } catch (RuntimeException e) {
             System.out.println("Có lỗi khi tạo booking: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.out.println("Nguyên nhân gốc: " + e.getCause().getMessage());
+            }
         }
     }
 
@@ -102,7 +105,7 @@ public class EmployeeMenu {
         }
 
         System.out.println("=================================================================================================================================");
-        System.out.println("ID | Room ID | Start Time         | End Time           | Trang thai duyet | Trang thai san sang  | Chuan bi");
+        System.out.println("ID | Room ID | Start Time         | End Time           | Trạng thái duyệt | Trạng thái sẵn sàng  | Chuẩn bị");
         System.out.println("---------------------------------------------------------------------------------------------------------------------------------");
         for (Booking b : list) {
             String preparation = bookingService.getPreparationSummary(b.getId());

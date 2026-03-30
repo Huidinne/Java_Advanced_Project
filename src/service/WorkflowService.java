@@ -121,6 +121,10 @@ public class WorkflowService {
         return bookingDAO.findAssignedBySupportAndDate(supportStaffId, date);
     }
 
+    public List<Booking> getAssignedBookings(int supportStaffId) {
+        return bookingDAO.findAssignedBySupport(supportStaffId);
+    }
+
     public boolean updatePreparationStatus(int supportStaffId, int bookingId, PreparationStatus status) {
         if (status == null || status == PreparationStatus.NOT_ASSIGNED) {
             throw new IllegalArgumentException("Trạng thái chuẩn bị không hợp lệ");

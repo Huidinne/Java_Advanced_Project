@@ -6,15 +6,12 @@ import model.User;
 import service.WorkflowService;
 import util.InputUtil;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class SupportMenu {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final WorkflowService workflowService = new WorkflowService();
     private final User currentUser;
 
@@ -28,14 +25,14 @@ public class SupportMenu {
                     ================================
                                MENU HỖ TRỢ
                     ================================
-                    | 1 | Cong viec duoc phan cong |
-                    | 2 | Cap nhat chuan bi        |
+                    | 1 | Công việc được phân công |
+                    | 2 | Cập nhật chuẩn bị        |
                     | 0 | Đăng xuất                |
                     ================================
                     Chọn: """);
 
             switch (choice) {
-                case 1 -> viewAssignedWorkByDate();
+                case 1 -> viewAssignedWork();
                 case 2 -> updatePreparationStatus();
                 case 0 -> {
                     System.out.println("Đã đăng xuất");
@@ -46,16 +43,15 @@ public class SupportMenu {
         }
     }
 
-    private void viewAssignedWorkByDate() {
-        LocalDate date = inputDate("Nhap ngay (yyyy-MM-dd), bo trong de lay hom nay: ");
-        List<Booking> list = workflowService.getAssignedBookingsByDate(currentUser.getId(), date);
+    private void viewAssignedWork() {
+        List<Booking> list = workflowService.getAssignedBookings(currentUser.getId());
         if (list.isEmpty()) {
-            System.out.println("Khong co cong viec nao cho ngay da chon");
+            System.out.println("Hiện chưa có công việc nào được phân công cho bạn");
             return;
         }
 
         System.out.println("===========================================================================================");
-        System.out.println("ID | Room | Start Time         | End Time           | Trang thai chuan bi");
+        System.out.println("ID | Room | Start Time         | End Time           | Trạng thái chuẩn bị");
         System.out.println("-------------------------------------------------------------------------------------------");
         for (Booking b : list) {
             System.out.printf("%-2d | %-4d | %-18s | %-18s | %-18s%n",
@@ -69,37 +65,37 @@ public class SupportMenu {
     }
 
     private void updatePreparationStatus() {
-        int bookingId = InputUtil.inputInt("Nhap ID booking duoc giao: ");
+        int bookingId = InputUtil.inputInt("Nhập ID booking được giao: ");
         PreparationStatus status = inputPreparationStatus();
 
-        System.out.print("Xac nhan cap nhat trang thai? (y/n): ");
+        System.out.print("Xác nhận cập nhật trạng thái? (y/n): ");
         if (!confirmYesNo()) {
-            System.out.println("Da huy thao tac");
+            System.out.println("Đã hủy thao tác");
             return;
         }
 
         try {
             boolean ok = workflowService.updatePreparationStatus(currentUser.getId(), bookingId, status);
             if (ok) {
-                System.out.println("Cap nhat trang thai chuan bi thanh cong");
+                System.out.println("Cập nhật trạng thái thành công");
             } else {
-                System.out.println("Cap nhat that bai: booking khong duoc giao cho ban hoac khong hop le");
+                System.out.println("Cập nhật thất bại: booking không được giao cho bạn hoặc không hợp lệ");
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("Du lieu khong hop le: " + e.getMessage());
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Loi cap nhat trang thai: " + e.getMessage());
+            System.out.println("Lỗi cập nhật trạng thái: " + e.getMessage());
         }
     }
 
     private PreparationStatus inputPreparationStatus() {
         while (true) {
             int choice = InputUtil.inputInt("""
-                    Chon trang thai chuan bi:
+                    Chọn trạng thái chuẩn bị:
                     | 1 | PREPARING        |
                     | 2 | READY            |
                     | 3 | MISSING_EQUIPMENT|
-                    Chon: """);
+                    Chọn: """);
             switch (choice) {
                 case 1:
                     return PreparationStatus.PREPARING;
@@ -108,25 +104,11 @@ public class SupportMenu {
                 case 3:
                     return PreparationStatus.MISSING_EQUIPMENT;
                 default:
-                    System.out.println("Lua chon khong hop le");
+                    System.out.println("Lựa chọn không hợp lệ");
             }
         }
     }
 
-    private LocalDate inputDate(String message) {
-        while (true) {
-            String raw = InputUtil.inputString(message);
-            if (raw.isBlank()) {
-                return LocalDate.now();
-            }
-
-            try {
-                return LocalDate.parse(raw, DATE_FORMATTER);
-            } catch (DateTimeParseException e) {
-                System.out.println("Dinh dang khong hop le. Vi du: 2026-03-30");
-            }
-        }
-    }
 
     private boolean confirmYesNo() {
         while (true) {
@@ -137,7 +119,7 @@ public class SupportMenu {
             if ("n".equalsIgnoreCase(input)) {
                 return false;
             }
-            System.out.print("Vui long nhap y hoac n: ");
+            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }

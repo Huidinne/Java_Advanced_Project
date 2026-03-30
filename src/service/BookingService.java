@@ -104,7 +104,7 @@ public class BookingService {
 			return true;
 
 		} catch (Exception e) {
-			throw new RuntimeException("Lỗi tạo booking", e);
+			throw new RuntimeException("Lỗi tạo booking" + e.getMessage(),e);
 		}
 	}
 
