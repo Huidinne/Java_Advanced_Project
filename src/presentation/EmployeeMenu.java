@@ -89,10 +89,7 @@ public class EmployeeMenu {
         } catch (IllegalArgumentException e) {
             System.out.println("Lỗi dữ liệu: " + e.getMessage());
         } catch (RuntimeException e) {
-            System.out.println("Có lỗi khi tạo booking: " + e.getMessage());
-            if (e.getCause() != null) {
-                System.out.println("Nguyên nhân gốc: " + e.getCause().getMessage());
-            }
+            System.out.println("Có lỗi khi tạo booking. Vui lòng thử lại sau.");
         }
     }
 

@@ -65,8 +65,8 @@ public class UserDAO {
         String sql = "SELECT * FROM users";
 
         try (Connection conn = DBConnection.getConnection();
-                Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 User user = new User();

@@ -32,8 +32,8 @@ public class EquipmentDAO {
         String sql = "SELECT * FROM equipments";
 
         try (Connection conn = DBConnection.getConnection();
-                Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Equipment equipment = new Equipment();

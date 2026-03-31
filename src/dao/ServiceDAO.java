@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +32,8 @@ public class ServiceDAO {
 		String sql = "SELECT * FROM services ORDER BY id";
 
 		try (Connection conn = DBConnection.getConnection();
-			 Statement st = conn.createStatement();
-			 ResultSet rs = st.executeQuery(sql)) {
+			 PreparedStatement ps = conn.prepareStatement(sql);
+			 ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
 				Service service = new Service();
