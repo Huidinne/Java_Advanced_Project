@@ -87,10 +87,16 @@ public class AdminUserMenu {
         }
 
         Role role = inputRole();
-        if (authService.createUser(username, password, name, phone, role)) {
-            System.out.printf("Tạo tài khoản %s thành công%n", role);
-        } else {
-            System.out.println("Tạo tài khoản thất bại");
+        try {
+            if (authService.createUser(username, password, name, phone, role)) {
+                System.out.printf("Tạo tài khoản %s thành công%n", role);
+            } else {
+                System.out.println("Tạo tài khoản thất bại");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi tạo tài khoản: " + e.getMessage());
         }
     }
 
@@ -124,11 +130,14 @@ public class AdminUserMenu {
             return;
         }
 
-        System.out.println("=== DANH SÁCH NGƯỜI DÙNG ===");
+        System.out.println("================================================================================");
+        System.out.println("ID | Username        | Tên người dùng        | Vai trò");
+        System.out.println("--------------------------------------------------------------------------------");
         for (User u : list) {
-            System.out.printf("ID: %d | Username: %s | Tên: %s | Vai trò: %s%n",
+            System.out.printf("%-2d | %-15s | %-20s | %-8s%n",
                     u.getId(), u.getUsername(), u.getName(), u.getRole());
         }
+        System.out.println("================================================================================");
     }
 
     private void viewSupportStaff() {
@@ -139,39 +148,34 @@ public class AdminUserMenu {
             return;
         }
 
-        System.out.println("=== DANH SÁCH SUPPORT STAFF ===");
+        System.out.println("============================================================");
+        System.out.println("ID | Username        | Tên nhân viên hỗ trợ");
+        System.out.println("------------------------------------------------------------");
         for (User u : list) {
-            System.out.printf("ID: %d | Username: %s | Tên: %s%n",
+            System.out.printf("%-2d | %-15s | %-25s%n",
                     u.getId(), u.getUsername(), u.getName());
         }
+        System.out.println("============================================================");
     }
 
     private void deleteUser() {
-        int id = InputUtil.inputInt("ID người dùng cần xóa: ");
+        int id = InputUtil.inputPositiveInt("ID người dùng cần xóa: ");
 
-        System.out.print("Xác nhận xóa người dùng ID " + id + "? (y/n): ");
-        if (!confirmYesNo()) {
+        if (!InputUtil.inputYesNo("Xác nhận xóa người dùng ID " + id + "? (y/n): ")) {
             System.out.println("Đã hủy thao tác xóa người dùng");
             return;
         }
 
-        if (authService.deleteUser(id)) {
-            System.out.println("Xóa người dùng thành công");
-        } else {
-            System.out.println("Xóa người dùng thất bại");
-        }
-    }
-
-    private boolean confirmYesNo() {
-        while (true) {
-            String input = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(input)) {
-                return true;
+        try {
+            if (authService.deleteUser(id)) {
+                System.out.println("Xóa người dùng thành công");
+            } else {
+                System.out.println("Xóa người dùng thất bại");
             }
-            if ("n".equalsIgnoreCase(input)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Không thể xóa người dùng. Có thể đang được tham chiếu bởi booking.");
         }
     }
 }

@@ -1,6 +1,7 @@
 package service;
 
 import dao.BookingDAO;
+import dao.RoomDAO;
 import dao.UserDAO;
 import model.*;
 import util.DBConnection;
@@ -12,6 +13,7 @@ import java.util.List;
 public class WorkflowService {
 
     private final BookingDAO bookingDAO = new BookingDAO();
+    private final RoomDAO roomDAO = new RoomDAO();
     private final UserDAO userDAO = new UserDAO();
 
     public List<Booking> getPendingBookings() {
@@ -19,6 +21,9 @@ public class WorkflowService {
     }
 
     public boolean approveBooking(int bookingId) {
+        if (bookingId <= 0) {
+            throw new IllegalArgumentException("ID booking không hợp lệ");
+        }
         try (Connection conn = DBConnection.getConnection()) {
             conn.setAutoCommit(false);
 
@@ -53,6 +58,12 @@ public class WorkflowService {
                 return false;
             }
 
+            boolean roomUpdated = roomDAO.updateStatus(booking.getRoomId(), RoomStatus.IN_USE, conn);
+            if (!roomUpdated) {
+                conn.rollback();
+                return false;
+            }
+
             conn.commit();
             return true;
         } catch (Exception e) {
@@ -61,6 +72,9 @@ public class WorkflowService {
     }
 
     public boolean rejectBooking(int bookingId) {
+        if (bookingId <= 0) {
+            throw new IllegalArgumentException("ID booking không hợp lệ");
+        }
         Booking booking = bookingDAO.findById(bookingId);
         if (booking == null || booking.getStatus() != BookingStatus.PENDING) {
             return false;
@@ -89,6 +103,9 @@ public class WorkflowService {
     }
 
     public boolean assignSupportStaff(int bookingId, int supportStaffId) {
+        if (bookingId <= 0 || supportStaffId <= 0) {
+            throw new IllegalArgumentException("ID booking hoặc support staff không hợp lệ");
+        }
         Booking booking = bookingDAO.findById(bookingId);
         if (booking == null || booking.getStatus() != BookingStatus.APPROVED) {
             return false;
@@ -118,14 +135,26 @@ public class WorkflowService {
     }
 
     public List<Booking> getAssignedBookingsByDate(int supportStaffId, LocalDate date) {
+        if (supportStaffId <= 0) {
+            throw new IllegalArgumentException("ID nhân viên hỗ trợ không hợp lệ");
+        }
+        if (date == null) {
+            throw new IllegalArgumentException("Ngày không hợp lệ");
+        }
         return bookingDAO.findAssignedBySupportAndDate(supportStaffId, date);
     }
 
     public List<Booking> getAssignedBookings(int supportStaffId) {
+        if (supportStaffId <= 0) {
+            throw new IllegalArgumentException("ID nhân viên hỗ trợ không hợp lệ");
+        }
         return bookingDAO.findAssignedBySupport(supportStaffId);
     }
 
     public boolean updatePreparationStatus(int supportStaffId, int bookingId, PreparationStatus status) {
+        if (supportStaffId <= 0 || bookingId <= 0) {
+            throw new IllegalArgumentException("ID booking hoặc support staff không hợp lệ");
+        }
         if (status == null || status == PreparationStatus.NOT_ASSIGNED) {
             throw new IllegalArgumentException("Trạng thái chuẩn bị không hợp lệ");
         }

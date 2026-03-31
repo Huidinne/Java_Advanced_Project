@@ -59,17 +59,16 @@ public class SupportMenu {
                     b.getRoomId(),
                     b.getStartTime().format(DATE_TIME_FORMATTER),
                     b.getEndTime().format(DATE_TIME_FORMATTER),
-                    b.getPreparationStatus().name());
+                    b.getPreparationStatus() == null ? "NOT_ASSIGNED" : b.getPreparationStatus().name());
         }
         System.out.println("===========================================================================================");
     }
 
     private void updatePreparationStatus() {
-        int bookingId = InputUtil.inputInt("Nhập ID booking được giao: ");
+        int bookingId = InputUtil.inputPositiveInt("Nhập ID booking được giao: ");
         PreparationStatus status = inputPreparationStatus();
 
-        System.out.print("Xác nhận cập nhật trạng thái? (y/n): ");
-        if (!confirmYesNo()) {
+        if (!InputUtil.inputYesNo("Xác nhận cập nhật trạng thái? (y/n): ")) {
             System.out.println("Đã hủy thao tác");
             return;
         }
@@ -106,20 +105,6 @@ public class SupportMenu {
                 default:
                     System.out.println("Lựa chọn không hợp lệ");
             }
-        }
-    }
-
-
-    private boolean confirmYesNo() {
-        while (true) {
-            String input = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(input)) {
-                return true;
-            }
-            if ("n".equalsIgnoreCase(input)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
         }
     }
 }

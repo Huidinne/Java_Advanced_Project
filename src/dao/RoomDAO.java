@@ -75,18 +75,21 @@ public class RoomDAO {
     }
 
     public boolean updateStatus(int id, RoomStatus status) {
-        String sql = "UPDATE rooms SET status=? WHERE id=?";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, status.name());
-            ps.setInt(2, id);
-
-            return ps.executeUpdate() > 0;
+        try (Connection conn = DBConnection.getConnection()) {
+            return updateStatus(id, status, conn);
 
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi update room status", e);
+        }
+    }
+
+    public boolean updateStatus(int id, RoomStatus status, Connection conn) throws SQLException {
+        String sql = "UPDATE rooms SET status=? WHERE id=?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
         }
     }
 

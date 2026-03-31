@@ -58,13 +58,19 @@ public class AdminRoomMenu {
         }
     }
     private void addRoom() {
-        String name = inputName();
-        int capacity = InputUtil.inputInt("Sức chứa: ");
-        String location = inputLocation();
-        RoomStatus status = RoomStatus.AVAILABLE;
+        try {
+            String name = inputName();
+            int capacity = InputUtil.inputPositiveInt("Sức chứa: ");
+            String location = inputLocation();
+            RoomStatus status = RoomStatus.AVAILABLE;
 
-        if (roomService.addRoom(name, capacity, location, status)) {
-            System.out.println("Thêm phòng thành công");
+            if (roomService.addRoom(name, capacity, location, status)) {
+                System.out.println("Thêm phòng thành công");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi thêm phòng: " + e.getMessage());
         }
     }
 
@@ -105,24 +111,30 @@ public class AdminRoomMenu {
     }
 
     private void updateRoomInfo() {
-        int id = InputUtil.inputInt("ID phòng cần cập nhật: ");
+        int id = InputUtil.inputPositiveInt("ID phòng cần cập nhật: ");
         if (roomService.getRoomById(id) == null) {
             System.out.println("Phòng không tồn tại");
             return;
         }
-        String name = InputUtil.inputString("Tên mới: ");
-        int capacity = InputUtil.inputInt("Sức chứa: ");
-        String location = InputUtil.inputString("Vị trí: ");
+        try {
+            String name = InputUtil.inputString("Tên mới: ");
+            int capacity = InputUtil.inputPositiveInt("Sức chứa: ");
+            String location = InputUtil.inputString("Vị trí: ");
 
-        if (roomService.updateRoom(id, name, capacity, location)) {
-            System.out.println("Cập nhật thông tin thành công");
-        } else {
-            System.out.println("Phòng không tồn tại");
+            if (roomService.updateRoom(id, name, capacity, location)) {
+                System.out.println("Cập nhật thông tin thành công");
+            } else {
+                System.out.println("Phòng không tồn tại");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi cập nhật phòng: " + e.getMessage());
         }
     }
 
     private void updateRoomStatus() {
-        int id = InputUtil.inputInt("Nhập ID phòng cần cập nhật trạng thái: ");
+        int id = InputUtil.inputPositiveInt("Nhập ID phòng cần cập nhật trạng thái: ");
         if (roomService.getRoomById(id) == null) {
             System.out.println("Phòng không tồn tại");
             return;
@@ -148,39 +160,37 @@ public class AdminRoomMenu {
             }
         }
 
-        if(roomService.updateRoomStatus(id, status)) {
-            System.out.println("Cập nhật trạng thái thành công");
-        } else {
-            System.out.println("Phòng không tồn tại");
+        try {
+            if(roomService.updateRoomStatus(id, status)) {
+                System.out.println("Cập nhật trạng thái thành công");
+            } else {
+                System.out.println("Phòng không tồn tại");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi cập nhật trạng thái phòng: " + e.getMessage());
         }
     }
 
     private void deleteRoom() {
-        int id = InputUtil.inputInt("ID phòng cần xóa: ");
+        int id = InputUtil.inputPositiveInt("ID phòng cần xóa: ");
 
-        System.out.print("Xác nhận xóa phòng ID " + id + "? (y/n): ");
-        if (!confirmYesNo()) {
+        if (!InputUtil.inputYesNo("Xác nhận xóa phòng ID " + id + "? (y/n): ")) {
             System.out.println("Đã hủy thao tác xóa phòng");
             return;
         }
 
-        if (roomService.deleteRoom(id)) {
-            System.out.println("Xóa phòng thành công");
-        } else {
-            System.out.println("Phòng không tồn tại");
-        }
-    }
-
-    private boolean confirmYesNo() {
-        while (true) {
-            String input = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(input)) {
-                return true;
+        try {
+            if (roomService.deleteRoom(id)) {
+                System.out.println("Xóa phòng thành công");
+            } else {
+                System.out.println("Phòng không tồn tại");
             }
-            if ("n".equalsIgnoreCase(input)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Không thể xóa phòng. Có thể phòng đang được sử dụng.");
         }
     }
 }

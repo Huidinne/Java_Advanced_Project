@@ -8,7 +8,6 @@ import util.InputUtil;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +51,8 @@ public class EmployeeMenu {
 
     private void bookRoom() {
         try {
-            LocalDateTime startTime = inputDateTime("Thời gian bắt đầu (yyyy-MM-dd HH:mm): ");
-            LocalDateTime endTime = inputDateTime("Thời gian kết thúc (yyyy-MM-dd HH:mm): ");
+            LocalDateTime startTime = InputUtil.inputDateTime("Thời gian bắt đầu (yyyy-MM-dd HH:mm): ", DATE_TIME_FORMATTER);
+            LocalDateTime endTime = InputUtil.inputDateTime("Thời gian kết thúc (yyyy-MM-dd HH:mm): ", DATE_TIME_FORMATTER);
 
             List<Room> availableRooms = bookingService.getAvailableRooms(startTime, endTime);
             if (availableRooms.isEmpty()) {
@@ -68,7 +67,7 @@ public class EmployeeMenu {
                 return;
             }
 
-            int attendeeCount = inputPositiveInt("Số người tham gia: ");
+            int attendeeCount = InputUtil.inputPositiveInt("Số người tham gia: ");
 
             List<BookingDetail> requestDetails = new ArrayList<>();
             requestDetails.addAll(inputEquipmentDetails());
@@ -142,17 +141,6 @@ public class EmployeeMenu {
         }
     }
 
-    private LocalDateTime inputDateTime(String message) {
-        while (true) {
-            String raw = InputUtil.inputString(message);
-            try {
-                return LocalDateTime.parse(raw, DATE_TIME_FORMATTER);
-            } catch (DateTimeParseException e) {
-                System.out.println("Định dạng không hợp lệ. Ví dụ: 2026-03-30 08:00");
-            }
-        }
-    }
-
     private void printAvailableRooms(List<Room> rooms) {
         System.out.println("=============================================================");
         System.out.println("ID | Tên phòng       | Sức chứa | Vị trí        | Trạng thái");
@@ -166,19 +154,28 @@ public class EmployeeMenu {
 
     private List<BookingDetail> inputEquipmentDetails() {
         List<BookingDetail> details = new ArrayList<>();
-        String answer = InputUtil.inputString("Bạn có muốn mượn thêm thiết bị? (y/n): ");
-        if (!"y".equalsIgnoreCase(answer)) {
+        if (!InputUtil.inputYesNo("Bạn có muốn mượn thêm thiết bị? (y/n): ")) {
             return details;
         }
 
-        printEquipmentList();
+        List<Equipment> equipments = equipmentService.getAllEquipment();
+        if (equipments.isEmpty()) {
+            System.out.println("Không có thiết bị để mượn thêm");
+            return details;
+        }
+
+        printEquipmentList(equipments);
         while (true) {
-            int equipmentId = InputUtil.inputInt("Nhập ID thiết bị (0 để kết thúc): ");
+            int equipmentId = InputUtil.inputNonNegativeInt("Nhập ID thiết bị (0 để kết thúc): ");
             if (equipmentId == 0) {
                 break;
             }
+            if (!containsEquipmentId(equipments, equipmentId)) {
+                System.out.println("ID thiết bị không nằm trong danh sách");
+                continue;
+            }
 
-            int quantity = InputUtil.inputInt("Số lượng: ");
+            int quantity = InputUtil.inputPositiveInt("Số lượng: ");
             BookingDetail detail = new BookingDetail();
             detail.setType(DetailType.EQUIPMENT);
             detail.setRefId(equipmentId);
@@ -191,19 +188,28 @@ public class EmployeeMenu {
 
     private List<BookingDetail> inputServiceDetails() {
         List<BookingDetail> details = new ArrayList<>();
-        String answer = InputUtil.inputString("Bạn có muốn yêu cầu thêm dịch vụ? (y/n): ");
-        if (!"y".equalsIgnoreCase(answer)) {
+        if (!InputUtil.inputYesNo("Bạn có muốn yêu cầu thêm dịch vụ? (y/n): ")) {
             return details;
         }
 
-        printServiceList();
+        List<model.Service> services = serviceService.getAllServices();
+        if (services.isEmpty()) {
+            System.out.println("Không có dịch vụ nào để yêu cầu thêm");
+            return details;
+        }
+
+        printServiceList(services);
         while (true) {
-            int serviceId = InputUtil.inputInt("Nhập ID dịch vụ (0 để kết thúc): ");
+            int serviceId = InputUtil.inputNonNegativeInt("Nhập ID dịch vụ (0 để kết thúc): ");
             if (serviceId == 0) {
                 break;
             }
+            if (!containsServiceId(services, serviceId)) {
+                System.out.println("ID dịch vụ không nằm trong danh sách");
+                continue;
+            }
 
-            int quantity = inputPositiveInt("Số lượng dịch vụ: ");
+            int quantity = InputUtil.inputPositiveInt("Số lượng dịch vụ: ");
             BookingDetail detail = new BookingDetail();
             detail.setType(DetailType.SERVICE);
             detail.setRefId(serviceId);
@@ -214,13 +220,7 @@ public class EmployeeMenu {
         return details;
     }
 
-    private void printEquipmentList() {
-        List<Equipment> equipments = equipmentService.getAllEquipment();
-        if (equipments.isEmpty()) {
-            System.out.println("Không có thiết bị để mượn thêm");
-            return;
-        }
-
+    private void printEquipmentList(List<Equipment> equipments) {
         System.out.println("============================================================");
         System.out.println("ID | Tên thiết bị      | Khả dụng | Trạng thái");
         System.out.println("------------------------------------------------------------");
@@ -231,13 +231,7 @@ public class EmployeeMenu {
         System.out.println("============================================================");
     }
 
-    private void printServiceList() {
-        List<model.Service> services = serviceService.getAllServices();
-        if (services.isEmpty()) {
-            System.out.println("Không có dịch vụ nào để yêu cầu thêm");
-            return;
-        }
-
+    private void printServiceList(List<model.Service> services) {
         System.out.println("============================================================");
         System.out.println("ID | Tên dịch vụ       | Giá");
         System.out.println("------------------------------------------------------------");
@@ -245,16 +239,6 @@ public class EmployeeMenu {
             System.out.printf("%-2d | %-15s | %,.0f%n", s.getId(), s.getName(), s.getPrice());
         }
         System.out.println("============================================================");
-    }
-
-    private int inputPositiveInt(String message) {
-        while (true) {
-            int value = InputUtil.inputInt(message);
-            if (value > 0) {
-                return value;
-            }
-            System.out.println("Giá trị phải lớn hơn 0");
-        }
     }
 
     private boolean containsRoomId(List<Room> rooms, int roomId) {
@@ -266,16 +250,25 @@ public class EmployeeMenu {
         return false;
     }
 
-    private boolean confirmYesNo() {
-        while (true) {
-            String input = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(input)) {
+    private boolean containsEquipmentId(List<Equipment> equipments, int equipmentId) {
+        for (Equipment equipment : equipments) {
+            if (equipment.getId() == equipmentId) {
                 return true;
             }
-            if ("n".equalsIgnoreCase(input)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
         }
+        return false;
+    }
+
+    private boolean containsServiceId(List<model.Service> services, int serviceId) {
+        for (model.Service service : services) {
+            if (service.getId() == serviceId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean confirmYesNo() {
+        return InputUtil.inputYesNo("");
     }
 }

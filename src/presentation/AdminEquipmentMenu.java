@@ -40,14 +40,20 @@ public class AdminEquipmentMenu {
     }
 
     private void addEquipment() {
-        String name = InputUtil.inputString("Tên thiết bị: ");
-        int totalQuantity = InputUtil.inputInt("Số lượng: ");
-        String status = InputUtil.inputString("Trạng thái (AVAILABLE/MAINTENANCE): ");
+        try {
+            String name = InputUtil.inputString("Tên thiết bị: ");
+            int totalQuantity = InputUtil.inputPositiveInt("Số lượng: ");
+            String status = InputUtil.inputString("Trạng thái (AVAILABLE/MAINTENANCE/BROKEN): ");
 
-        if (equipmentService.addEquipment(name, totalQuantity, status)) {
-            System.out.println("Thêm thiết bị thành công");
-        } else {
-            System.out.println("Thêm thiết bị thất bại");
+            if (equipmentService.addEquipment(name, totalQuantity, status)) {
+                System.out.println("Thêm thiết bị thành công");
+            } else {
+                System.out.println("Thêm thiết bị thất bại");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi thêm thiết bị: " + e.getMessage());
         }
     }
 
@@ -59,63 +65,70 @@ public class AdminEquipmentMenu {
             return;
         }
 
-        System.out.println("=== DANH SÁCH THIẾT BỊ ===");
+        System.out.println("============================================================================");
+        System.out.println("ID | Tên thiết bị      | Tổng số lượng | Khả dụng | Trạng thái");
+        System.out.println("----------------------------------------------------------------------------");
         for (Equipment e : list) {
-            System.out.printf("ID: %d | Tên: %s | Tổng SL: %d | SL Khả dụng: %d | Trạng thái: %s%n",
+            System.out.printf("%-2d | %-15s | %-12d | %-8d | %-12s%n",
                     e.getId(), e.getName(), e.getTotalQuantity(), e.getAvailableQuantity(), e.getStatus());
         }
+        System.out.println("============================================================================");
     }
 
     private void updateEquipment() {
-        int id = InputUtil.inputInt("ID thiết bị: ");
-        String name = InputUtil.inputString("Tên mới: ");
-        int totalQuantity = InputUtil.inputInt("Số lượng: ");
-        String status = InputUtil.inputString("Trạng thái: ");
+        try {
+            int id = InputUtil.inputPositiveInt("ID thiết bị: ");
+            String name = InputUtil.inputString("Tên mới: ");
+            int totalQuantity = InputUtil.inputPositiveInt("Số lượng: ");
+            String status = InputUtil.inputString("Trạng thái: ");
 
-        if (equipmentService.updateEquipment(id, name, totalQuantity, status)) {
-            System.out.println("Cập nhật thành công");
-        } else {
-            System.out.println("Cập nhật thất bại");
+            if (equipmentService.updateEquipment(id, name, totalQuantity, status)) {
+                System.out.println("Cập nhật thành công");
+            } else {
+                System.out.println("Cập nhật thất bại");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi cập nhật thiết bị: " + e.getMessage());
         }
     }
 
     private void updateAvailableQuantity() {
-        int id = InputUtil.inputInt("ID thiết bị: ");
-        int availableQuantity = InputUtil.inputInt("Số lượng khả dụng: ");
+        try {
+            int id = InputUtil.inputPositiveInt("ID thiết bị: ");
+            int availableQuantity = InputUtil.inputNonNegativeInt("Số lượng khả dụng: ");
 
-        if (equipmentService.updateAvailableQuantity(id, availableQuantity)) {
-            System.out.println("Cập nhật số lượng thành công");
-        } else {
-            System.out.println("Cập nhật số lượng thất bại");
+            if (equipmentService.updateAvailableQuantity(id, availableQuantity)) {
+                System.out.println("Cập nhật số lượng thành công");
+            } else {
+                System.out.println("Cập nhật số lượng thất bại");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi cập nhật số lượng: " + e.getMessage());
         }
     }
 
     private void deleteEquipment() {
-        int id = InputUtil.inputInt("ID thiết bị cần xóa: ");
+        int id = InputUtil.inputPositiveInt("ID thiết bị cần xóa: ");
 
-        System.out.print("Xác nhận xóa thiết bị ID " + id + "? (y/n): ");
-        if (!confirmYesNo()) {
+        if (!InputUtil.inputYesNo("Xác nhận xóa thiết bị ID " + id + "? (y/n): ")) {
             System.out.println("Đã hủy thao tác xóa thiết bị");
             return;
         }
 
-        if (equipmentService.deleteEquipment(id)) {
-            System.out.println("Xóa thiết bị thành công");
-        } else {
-            System.out.println("Xóa thiết bị thất bại");
-        }
-    }
-
-    private boolean confirmYesNo() {
-        while (true) {
-            String input = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(input)) {
-                return true;
+        try {
+            if (equipmentService.deleteEquipment(id)) {
+                System.out.println("Xóa thiết bị thành công");
+            } else {
+                System.out.println("Xóa thiết bị thất bại");
             }
-            if ("n".equalsIgnoreCase(input)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Không thể xóa thiết bị. Có thể đang được sử dụng.");
         }
     }
 }

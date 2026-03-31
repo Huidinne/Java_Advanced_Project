@@ -65,9 +65,8 @@ public class AdminWorkflowMenu {
     }
 
     private void approveBookingFlow() {
-        int bookingId = InputUtil.inputInt("Nhập ID booking cần duyệt: ");
-        System.out.print("Xác nhận duyệt booking này? (y/n): ");
-        if (!confirmYesNo()) {
+        int bookingId = InputUtil.inputPositiveInt("Nhập ID booking cần duyệt: ");
+        if (!InputUtil.inputYesNo("Xác nhận duyệt booking này? (y/n): ")) {
             System.out.println("Đã hủy thao tác");
             return;
         }
@@ -85,9 +84,8 @@ public class AdminWorkflowMenu {
     }
 
     private void rejectBookingFlow() {
-        int bookingId = InputUtil.inputInt("Nhập ID booking cần từ chối: ");
-        System.out.print("Xác nhận từ chối booking này? (y/n): ");
-        if (!confirmYesNo()) {
+        int bookingId = InputUtil.inputPositiveInt("Nhập ID booking cần từ chối: ");
+        if (!InputUtil.inputYesNo("Xác nhận từ chối booking này? (y/n): ")) {
             System.out.println("Đã hủy thao tác");
             return;
         }
@@ -105,12 +103,11 @@ public class AdminWorkflowMenu {
     }
 
     private void assignSupportFlow() {
-        int bookingId = InputUtil.inputInt("Nhập ID booking đã duyệt cần phân công support: ");
+        int bookingId = InputUtil.inputPositiveInt("Nhập ID booking đã duyệt cần phân công support: ");
         printSupportStaff();
-        int supportId = InputUtil.inputInt("Nhập ID support staff: ");
+        int supportId = InputUtil.inputPositiveInt("Nhập ID support staff: ");
 
-        System.out.print("Xác nhận phân công support cho booking này? (y/n): ");
-        if (!confirmYesNo()) {
+        if (!InputUtil.inputYesNo("Xác nhận phân công support cho booking này? (y/n): ")) {
             System.out.println("Đã hủy thao tác");
             return;
         }
@@ -136,23 +133,13 @@ public class AdminWorkflowMenu {
             return;
         }
 
-        System.out.println("=== DANH SÁCH SUPPORT STAFF ===");
+        System.out.println("============================================================");
+        System.out.println("ID | Username        | Tên nhân viên hỗ trợ");
+        System.out.println("------------------------------------------------------------");
         for (User u : supports) {
-            System.out.printf("ID: %d | Username: %s | Tên: %s%n", u.getId(), u.getUsername(), u.getName());
+            System.out.printf("%-2d | %-15s | %-25s%n", u.getId(), u.getUsername(), u.getName());
         }
-    }
-
-    private boolean confirmYesNo() {
-        while (true) {
-            String input = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(input)) {
-                return true;
-            }
-            if ("n".equalsIgnoreCase(input)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
-        }
+        System.out.println("============================================================");
     }
 }
 

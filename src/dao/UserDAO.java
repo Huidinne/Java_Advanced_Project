@@ -29,8 +29,8 @@ public class UserDAO {
                 return user;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi tìm người dùng theo username", e);
         }
         return null;
     }
@@ -54,8 +54,8 @@ public class UserDAO {
                 return user;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi tìm người dùng theo ID", e);
         }
         return null;
     }
@@ -79,8 +79,8 @@ public class UserDAO {
                 list.add(user);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi lấy danh sách người dùng", e);
         }
 
         return list;
@@ -107,8 +107,8 @@ public class UserDAO {
                 list.add(user);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi lấy danh sách người dùng theo vai trò", e);
         }
 
         return list;
@@ -128,10 +128,9 @@ public class UserDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi tạo người dùng", e);
         }
-        return false;
     }
 
     public boolean update(User user) {
@@ -149,10 +148,9 @@ public class UserDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi cập nhật người dùng", e);
         }
-        return false;
     }
 
     public boolean delete(int id) {
@@ -164,10 +162,9 @@ public class UserDAO {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi xóa người dùng", e);
         }
-        return false;
     }
     public boolean existsByUsername(String username) {
         String sql = "SELECT 1 FROM users WHERE username = ? LIMIT 1";
@@ -180,8 +177,8 @@ public class UserDAO {
 
             return rs.next();
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi kiểm tra trùng username", e);
         }
     }
 

@@ -22,10 +22,9 @@ public class EquipmentDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi thêm thiết bị", e);
         }
-        return false;
     }
 
     public List<Equipment> findAll() {
@@ -47,8 +46,8 @@ public class EquipmentDAO {
                 list.add(equipment);
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi lấy danh sách thiết bị", e);
         }
 
         return list;
@@ -74,8 +73,8 @@ public class EquipmentDAO {
                 return equipment;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi tìm thiết bị", e);
         }
         return null;
     }
@@ -115,10 +114,9 @@ public class EquipmentDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi cập nhật thiết bị", e);
         }
-        return false;
     }
 
     public boolean delete(int id) {
@@ -130,10 +128,9 @@ public class EquipmentDAO {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi xóa thiết bị", e);
         }
-        return false;
     }
 
     public boolean updateAvailableQuantity(int id, int quantity) {
@@ -147,10 +144,9 @@ public class EquipmentDAO {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi cập nhật số lượng khả dụng", e);
         }
-        return false;
     }
 
     public boolean reserveAvailableQuantity(int id, int quantity, Connection conn) throws SQLException {

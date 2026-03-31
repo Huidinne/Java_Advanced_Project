@@ -61,50 +61,55 @@ public class BookingService {
 		try (Connection conn = DBConnection.getConnection()) {
 			conn.setAutoCommit(false);
 
-			if (bookingDAO.existsConflict(roomId, startTime, endTime, conn)) {
-				conn.rollback();
-				return false;
-			}
-
-			Booking booking = new Booking();
-			booking.setUserId(userId);
-			booking.setRoomId(roomId);
-			booking.setStartTime(startTime);
-			booking.setEndTime(endTime);
-			booking.setStatus(BookingStatus.PENDING);
-			booking.setSupportStaffId(null);
-			booking.setPreparationStatus(PreparationStatus.NOT_ASSIGNED);
-
-			int bookingId = bookingDAO.insert(booking, conn);
-
-			for (BookingDetail detail : normalizedDetails) {
-				if (detail.getType() == DetailType.EQUIPMENT) {
-					Equipment equipment = equipmentDAO.findById(detail.getRefId(), conn);
-					if (equipment == null) {
-						throw new IllegalArgumentException("Thiết bị ID " + detail.getRefId() + " không tồn tại");
-					}
-
-					if (!equipmentDAO.reserveAvailableQuantity(detail.getRefId(), detail.getQuantity(), conn)) {
-						throw new IllegalArgumentException("Thiết bị ID " + detail.getRefId() + " không đủ số lượng khả dụng");
-					}
-				} else {
-					if (serviceDAO.findById(detail.getRefId()) == null) {
-						throw new IllegalArgumentException("Dịch vụ ID " + detail.getRefId() + " không tồn tại");
-					}
+			try {
+				if (bookingDAO.existsConflict(roomId, startTime, endTime, conn)) {
+					conn.rollback();
+					return false;
 				}
 
-				detail.setBookingId(bookingId);
-			}
+				Booking booking = new Booking();
+				booking.setUserId(userId);
+				booking.setRoomId(roomId);
+				booking.setStartTime(startTime);
+				booking.setEndTime(endTime);
+				booking.setStatus(BookingStatus.PENDING);
+				booking.setSupportStaffId(null);
+				booking.setPreparationStatus(PreparationStatus.NOT_ASSIGNED);
 
-			if (!bookingDetailDAO.insertBatch(normalizedDetails, conn)) {
-				throw new RuntimeException("Không thể lưu chi tiết booking");
-			}
+				int bookingId = bookingDAO.insert(booking, conn);
 
-			conn.commit();
-			return true;
+				for (BookingDetail detail : normalizedDetails) {
+					if (detail.getType() == DetailType.EQUIPMENT) {
+						Equipment equipment = equipmentDAO.findById(detail.getRefId(), conn);
+						if (equipment == null) {
+							throw new IllegalArgumentException("Thiết bị ID " + detail.getRefId() + " không tồn tại");
+						}
+
+						if (!equipmentDAO.reserveAvailableQuantity(detail.getRefId(), detail.getQuantity(), conn)) {
+							throw new IllegalArgumentException("Thiết bị ID " + detail.getRefId() + " không đủ số lượng khả dụng");
+						}
+					} else {
+						if (serviceDAO.findById(detail.getRefId()) == null) {
+							throw new IllegalArgumentException("Dịch vụ ID " + detail.getRefId() + " không tồn tại");
+						}
+					}
+
+					detail.setBookingId(bookingId);
+				}
+
+				if (!bookingDetailDAO.insertBatch(normalizedDetails, conn)) {
+					throw new RuntimeException("Không thể lưu chi tiết booking");
+				}
+
+				conn.commit();
+				return true;
+			} catch (Exception e) {
+				conn.rollback();
+				throw e;
+			}
 
 		} catch (Exception e) {
-			throw new RuntimeException("Lỗi tạo booking" + e.getMessage(),e);
+			throw new RuntimeException("Lỗi tạo booking: " + e.getMessage(), e);
 		}
 	}
 

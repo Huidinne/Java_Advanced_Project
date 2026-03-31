@@ -4,6 +4,7 @@ import dao.UserDAO;
 import model.Role;
 import model.User;
 import util.PasswordHash;
+import util.Validator;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class AuthService {
 
 
     public boolean register(String username, String password, String name, String phone) {
+        validateUserInput(username, password, name, phone);
         if (userDAO.existsByUsername(username)) {
             return false;
         }
@@ -51,6 +53,10 @@ public class AuthService {
     }
 
     public boolean createUser(String username, String password, String name, String phone, Role role) {
+        validateUserInput(username, password, name, phone);
+        if (role == null) {
+            throw new IllegalArgumentException("Vai trò không hợp lệ");
+        }
         if (userDAO.existsByUsername(username)) {
             return false;
         }
@@ -68,6 +74,24 @@ public class AuthService {
     }
 
     public boolean deleteUser(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID người dùng không hợp lệ");
+        }
         return userDAO.delete(id);
+    }
+
+    private void validateUserInput(String username, String password, String name, String phone) {
+        if (Validator.isBlank(username)) {
+            throw new IllegalArgumentException("Username không được để trống");
+        }
+        if (Validator.isBlank(password) || !Validator.isStrongPassword(password)) {
+            throw new IllegalArgumentException("Password phải có ít nhất 6 ký tự");
+        }
+        if (Validator.isBlank(name)) {
+            throw new IllegalArgumentException("Tên không được để trống");
+        }
+        if (!Validator.isBlank(phone) && !Validator.isPhoneValid(phone)) {
+            throw new IllegalArgumentException("Số điện thoại không hợp lệ");
+        }
     }
 }

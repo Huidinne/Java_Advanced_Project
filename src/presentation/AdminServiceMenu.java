@@ -78,7 +78,7 @@ public class AdminServiceMenu {
     }
 
     private void updateServiceFlow() {
-        int id = InputUtil.inputInt("Nhập ID dịch vụ cần sửa: ");
+        int id = InputUtil.inputPositiveInt("Nhập ID dịch vụ cần sửa: ");
         Service current = serviceService.getServiceById(id);
         if (current == null) {
             System.out.println("Dịch vụ không tồn tại");
@@ -108,7 +108,7 @@ public class AdminServiceMenu {
     }
 
     private void deleteServiceFlow() {
-        int id = InputUtil.inputInt("Nhập ID dịch vụ muốn xóa: ");
+        int id = InputUtil.inputPositiveInt("Nhập ID dịch vụ muốn xóa: ");
         Service current = serviceService.getServiceById(id);
         if (current == null) {
             System.out.println("Dịch vụ không tồn tại");
@@ -157,16 +157,7 @@ public class AdminServiceMenu {
     }
 
     private boolean confirmAction() {
-        while (true) {
-            String confirm = InputUtil.inputString("");
-            if ("y".equalsIgnoreCase(confirm)) {
-                return true;
-            }
-            if ("n".equalsIgnoreCase(confirm)) {
-                return false;
-            }
-            System.out.print("Vui lòng nhập y hoặc n: ");
-        }
+        return InputUtil.inputYesNo("");
     }
 }
 

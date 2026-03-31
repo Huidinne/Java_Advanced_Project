@@ -37,12 +37,17 @@ public class AuthMenu {
         String name = inputName();
         String phone = inputPhone();
 
-        boolean success = authService.register(username, password, name, phone);
-
-        if (success) {
-            System.out.println("Đăng ký thành công");
-        } else {
-            System.out.println("Username đã tồn tại hoặc lỗi hệ thống");
+        try {
+            boolean success = authService.register(username, password, name, phone);
+            if (success) {
+                System.out.println("Đăng ký thành công");
+            } else {
+                System.out.println("Username đã tồn tại hoặc lỗi hệ thống");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Dữ liệu không hợp lệ: " + e.getMessage());
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi đăng ký: " + e.getMessage());
         }
     }
 
@@ -50,19 +55,23 @@ public class AuthMenu {
         String username = inputUsername();
         String password = inputPassword();
 
-        User user = authService.login(username, password);
+        try {
+            User user = authService.login(username, password);
 
-        if (user == null) {
-            System.out.println("Sai username hoặc password");
-            return;
-        }
+            if (user == null) {
+                System.out.println("Sai username hoặc password");
+                return;
+            }
 
-        System.out.println("Đăng nhập thành công: " + user.getRole());
+            System.out.println("Đăng nhập thành công: " + user.getRole());
 
-        switch (user.getRole()) {
-            case ADMIN -> new AdminDashboard().show();
-            case SUPPORT -> new SupportMenu(user).show();
-            case EMPLOYEE -> new EmployeeMenu(user).show();
+            switch (user.getRole()) {
+                case ADMIN -> new AdminDashboard().show();
+                case SUPPORT -> new SupportMenu(user).show();
+                case EMPLOYEE -> new EmployeeMenu(user).show();
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Lỗi hệ thống khi đăng nhập: " + e.getMessage());
         }
     }
 

@@ -13,4 +13,16 @@ public class Validator {
     public static boolean isStrongPassword(String password) {
         return password.length() >= 6;
     }
+
+    public static boolean isPositive(int value) {
+        return value > 0;
+    }
+
+    public static boolean isNonNegative(int value) {
+        return value >= 0;
+    }
+
+    public static boolean isPositive(double value) {
+        return value > 0;
+    }
 }
