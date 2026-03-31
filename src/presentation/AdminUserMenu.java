@@ -104,17 +104,14 @@ public class AdminUserMenu {
         while (true) {
             int roleChoice = InputUtil.inputInt("""
                     Chọn role:
-                    | 1 | ADMIN    |
-                    | 2 | EMPLOYEE |
-                    | 3 | SUPPORT  |
+                    | 1 | EMPLOYEE |
+                    | 2 | SUPPORT  |
                     Chọn: """);
 
             switch (roleChoice) {
                 case 1:
-                    return Role.ADMIN;
-                case 2:
                     return Role.EMPLOYEE;
-                case 3:
+                case 2:
                     return Role.SUPPORT;
                 default:
                     System.out.println("Role không hợp lệ");

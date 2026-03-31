@@ -10,12 +10,12 @@ public class AdminDashboard {
                     ================================================
                                 TRANG CHỦ QUẢN TRỊ VIÊN
                     ================================================
-                    | 1 | Quản lý Phòng họp                      |
-                    | 2 | Quản lý Thiết bị                       |
-                    | 3 | Quản lý Người dùng                     |
-                    | 4 | Quản lý Dịch vụ đi kèm                 |
-                    | 5 | Duyệt & Phân công booking              |
-                    | 0 | Đăng xuất                              |
+                    | 1 | Quản lý Phòng họp                        |
+                    | 2 | Quản lý Thiết bị                         |
+                    | 3 | Quản lý Người dùng                       |
+                    | 4 | Quản lý Dịch vụ đi kèm                   |
+                    | 5 | Duyệt & Phân công booking                |
+                    | 0 | Đăng xuất                                |
                     ================================================
                     Chọn: """);
 
